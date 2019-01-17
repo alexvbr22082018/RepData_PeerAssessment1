@@ -5,18 +5,14 @@ output:
     keep_md: TRUE
 ---
 
-```{r setup, include=FALSE}
 
-knitr::opts_chunk$set(echo = TRUE,message = FALSE,warning = FALSE)
-
-options(scipen = 99999)
-```
 
 ## Loading and preprocessing the data
 
 For this part I will use two packages: **dplyr** and **lubridate**. The former is useful to process, transform and create variables, whereas the latter is useful to handle dates, since in the following sections the will be behavior comparisons between days, hence the package will be an useful tool.
 
-```{r read_process}
+
+```r
 library(dplyr)
 library(lubridate)
 
@@ -46,16 +42,12 @@ activity <-
          ) %>% 
   arrange(date_time) %>% 
   select(-date,-interval,-interval_tag)
-
-
-  
-
 ```
 
 ## What is mean total number of steps taken per day?
 
-```{r histogram,cache=TRUE}
 
+```r
 library(ggplot2)
 
 data_hist <- 
@@ -75,15 +67,16 @@ data_hist %>%
        x = "Number of steps",
        y = "Count")+
   theme_bw()
-
 ```
 
-The mean of the total number of steps taken per day is **`r mean0`** and the median is **`r median0`** .
+![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
+
+The mean of the total number of steps taken per day is **9354.23** and the median is **10395** .
 
 ## What is the average daily activity pattern?
 
-```{r daily_mean}
 
+```r
 library(ggplot2)
 
 data_day <- activity %>% 
@@ -107,28 +100,27 @@ data_day %>%
        y = "Average number of steps")+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-
 ```
 
-The interval in wich the steps were maximum was **`r maxim`** .
+![](PA1_template_files/figure-html/daily_mean-1.png)<!-- -->
+
+The interval in wich the steps were maximum was **08:35** .
 
 ## Imputing missing values
 
-```{r missing}
 
+```r
 miss <- activity %>% 
   filter(is.na(steps)) %>% 
   nrow
-
 ```
 
-The total number of missing values in the dataset is: **`r miss`** . The strategy selected is impute the missing values whit the mean value for each interval.
+The total number of missing values in the dataset is: **2304** . The strategy selected is impute the missing values whit the mean value for each interval.
 
 The histogram after imputing:
 
-```{r imputing}
 
+```r
 new <-
   activity %>%
   mutate(time = format(date_time,"%H:%M"),
@@ -158,18 +150,17 @@ ggplot(aes(x = imputed_steps))+
        x = "Number of steps",
        y = "Count")+
   theme_bw()
-
-
-
 ```
 
+![](PA1_template_files/figure-html/imputing-1.png)<!-- -->
 
-The mean after imputing is **`r mean1`** and the median is **`r median1`** . After imputing the total number of steps taken have increase in: **`r diference`** . In the other hand, after imputing, the mean and median get closer, almost are the same.
+
+The mean after imputing is **10766.19** and the median is **10766.19** . After imputing the total number of steps taken have increase in: **86129.51** . In the other hand, after imputing, the mean and median get closer, almost are the same.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
 
+```r
 new %>% mutate(time = format(date_time,"%H:%M"),
                time = factor(time,levels = unique(time)),
                week_day = wday(date_time,label = T),
@@ -191,8 +182,9 @@ new %>% mutate(time = format(date_time,"%H:%M"),
   facet_grid(.~week)+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
 
 
   
